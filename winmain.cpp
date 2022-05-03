@@ -15,3 +15,4 @@ int WINAPI WinMain(						// WINAPI는 함수 호출 규칙인데 RAM에 저장된 parameter를
 		MB_ICONEXCLAMATION | MB_OK		// 그 노란색 삼각형에 느낌표 아이콘 넣기 | 확인 클릭 박스 넣기
 	);
 }
+
