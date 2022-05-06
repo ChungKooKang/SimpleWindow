@@ -85,6 +85,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 {
 	switch (message)
 	{
+//	배경 새로 그리지 않기
+//	case WM_ERASEBKGND :
+//		break;
+
+	// window 그리기 표준 가이드
+	case WM_PAINT :
+	{
+		PAINTSTRUCT ps;
+		
+		HDC hdc = BeginPaint(hwnd,& ps);
+		// TODO
+		Rectangle(hdc, 0, 0, 100, 100);
+		EndPaint(hwnd,& ps);
+	}
+		break;
+
 	case WM_KEYDOWN :
 		{
 			std::stringstream ss;
