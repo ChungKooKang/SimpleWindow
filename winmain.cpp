@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <sstream>
 // 1. 윈도우 클래스 등록 (주의 C++의 클래스 이야기가 아니다!)(type이라고 보면 됨)
 // 2. 윈도우 만들기 (1번의 윈도우 클래스 활용)
 // 3. 윈도우 메시지 루프 처리
@@ -84,6 +85,29 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 {
 	switch (message)
 	{
+	case WM_KEYDOWN :
+		{
+			std::stringstream ss;
+			if (wParam == VK_SPACE) // 특정 key가 눌렸을 때만 뜨기 // VK 뭐뭐 있는지 공부하기
+			{
+				ss << "Virtual Key : " << wParam << ", Extra : " << lParam << std::endl;
+				OutputDebugStringA(ss.str().c_str());
+			}
+			
+			break;
+		}
+	case WM_LBUTTONDOWN :
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+
+			// 문자열 만들기 및 마우스 인식해서 좌표 띄우기
+			std::stringstream ss;
+			ss << "x : " << x << ", y : " << y << std::endl;
+			//MessageBoxA(hwnd, ss.str().c_str(), "Message Test", MB_OK);  // case1
+			OutputDebugStringA(ss.str().c_str()); // case2
+			break;
+		}
 	case WM_CLOSE :
 		DestroyWindow(hwnd);
 		break; // 닫기 버튼을 눌러도 안 끝날 수 있다. 닫기와 앱을 종료하는 것은 다른 이야기이다.
