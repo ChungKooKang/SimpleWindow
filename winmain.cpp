@@ -98,14 +98,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		}
 	case WM_LBUTTONDOWN :
 		{
-			int x = LOWORD(lParam);
-			int y = HIWORD(lParam);
+			HDC hdc;
 
-			// 문자열 만들기 및 마우스 인식해서 좌표 띄우기
-			std::stringstream ss;
-			ss << "x : " << x << ", y : " << y << std::endl;
-			//MessageBoxA(hwnd, ss.str().c_str(), "Message Test", MB_OK);  // case1
-			OutputDebugStringA(ss.str().c_str()); // case2
+			hdc = GetDC(hwnd);
+
+			Rectangle(hdc, 0, 0, 100, 100);
+			
+			ReleaseDC(hwnd, hdc);
 			break;
 		}
 	case WM_CLOSE :
