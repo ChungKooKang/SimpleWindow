@@ -81,6 +81,39 @@ int WINAPI WinMain(
 	return (int)msg.wParam;
 }
 
+void OnPaint(HWND hwnd)
+{
+	PAINTSTRUCT ps;
+
+	HDC hdc = BeginPaint(hwnd, &ps); // 반환값은 hwnd가 됨.
+
+	// Pen
+	HPEN bluePen = CreatePen(PS_SOLID, 1,RGB(0,0,255)); // PS : pen style
+
+	HPEN oldPen = (HPEN)SelectObject(hdc, bluePen);// 다형성이랑 비슷하게 HGDIOBJ를 쓸 수 있음
+
+	Rectangle(hdc, 0, 0, 100, 100);
+
+	DeleteObject(bluePen);
+	SelectObject(hdc, oldPen); // 예전 pen으로 다시 그리기. 가능한 이유는 selecobject가 이전에 사용하던 그리기 도구를 가지고 있어서
+
+
+	//Brush
+	HBRUSH hatchBrush = CreateHatchBrush(HS_CROSS, RGB(255, 0, 0));
+	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, hatchBrush);
+	Rectangle(hdc, 100, 100, 200, 200);
+
+
+
+	DeleteObject(hatchBrush);
+	SelectObject(hdc,oldBrush);
+
+
+	// TODO
+	EndPaint(hwnd, &ps); // 그리기가 끝났다라는 것을 알려주는 것. 필수로 들어가야한다. window 내부는 다 C로 되어있기 때문에 소멸자 같은 역할을 하는 게 필요함.
+
+}
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
@@ -92,12 +125,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	// window 그리기 표준 가이드
 	case WM_PAINT :
 	{
-		PAINTSTRUCT ps;
-		
-		HDC hdc = BeginPaint(hwnd,& ps);
-		// TODO
-		Rectangle(hdc, 0, 0, 100, 100);
-		EndPaint(hwnd,& ps);
+		OnPaint(hwnd);
 	}
 		break;
 
