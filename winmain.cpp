@@ -1,5 +1,11 @@
 #include <Windows.h>
+#include <gdiplus.h> // gdiplus 선언
 #include <sstream>
+
+#pragma comment (lib, "Gdiplus.lib") // gdiplus 정의 lib는 기계어로 번역된 library로 쓸 수 있는 파일들의 확장자
+
+
+
 // 1. 윈도우 클래스 등록 (주의 C++의 클래스 이야기가 아니다!)(type이라고 보면 됨)
 // 2. 윈도우 만들기 (1번의 윈도우 클래스 활용)
 // 3. 윈도우 메시지 루프 처리
@@ -24,6 +30,14 @@ int WINAPI WinMain(
 	_In_ int nShowCmd					
 )
 {
+	//gidplus 사용전 처리
+	ULONG_PTR gdiplusToken;// token 대체화폐 : 결재를 간단하게 만들어 줌. 티켓 같은 것. 내가 어디의 누구냐를 말해주는 것.
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput; //C++이어서 초기화 필요 없음. 왜냐하면 생성자가 있으니까
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr ); // (token, input, output)
+
+
+
+
 	// 윈도우 클래스
 	// 초기화에 관련된 코드
 	WNDCLASSEX wc; //WNDCLASS + Extra == WNDCLASSEX
@@ -78,40 +92,50 @@ int WINAPI WinMain(
 		DispatchMessageW(&msg); // 번역된 message를 각각 윈도우에 보냄
 
 	}
+
+	Gdiplus::GdiplusShutdown(gdiplusToken);
 	return (int)msg.wParam;
 }
 
 void OnPaint(HWND hwnd)
 {
+//	PAINTSTRUCT ps;
+//
+//	HDC hdc = BeginPaint(hwnd, &ps); // 반환값은 hwnd가 됨.
+//
+//	// Pen
+//	HPEN bluePen = CreatePen(PS_SOLID, 1,RGB(0,0,255)); // PS : pen style
+//
+//	HPEN oldPen = (HPEN)SelectObject(hdc, bluePen);// 다형성이랑 비슷하게 HGDIOBJ를 쓸 수 있음
+//
+//	Rectangle(hdc, 0, 0, 100, 100);
+//
+//	DeleteObject(bluePen);
+//	SelectObject(hdc, oldPen); // 예전 pen으로 다시 그리기. 가능한 이유는 selecobject가 이전에 사용하던 그리기 도구를 가지고 있어서
+//
+//
+//	//Brush
+//	HBRUSH hatchBrush = CreateHatchBrush(HS_CROSS, RGB(255, 0, 0));
+//	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, hatchBrush);
+//	Rectangle(hdc, 100, 100, 200, 200);
+//
+//
+//	DeleteObject(hatchBrush);
+//	SelectObject(hdc,oldBrush);
+//
+//
+//	// TODO
+//	EndPaint(hwnd, &ps); // 그리기가 끝났다라는 것을 알려주는 것. 필수로 들어가야한다. window 내부는 다 C로 되어있기 때문에 소멸자 같은 역할을 하는 게 필요함.
+	
+	HDC hdc;
 	PAINTSTRUCT ps;
 
-	HDC hdc = BeginPaint(hwnd, &ps); // 반환값은 hwnd가 됨.
+	hdc = BeginPaint(hwnd, &ps);
 
-	// Pen
-	HPEN bluePen = CreatePen(PS_SOLID, 1,RGB(0,0,255)); // PS : pen style
-
-	HPEN oldPen = (HPEN)SelectObject(hdc, bluePen);// 다형성이랑 비슷하게 HGDIOBJ를 쓸 수 있음
-
-	Rectangle(hdc, 0, 0, 100, 100);
-
-	DeleteObject(bluePen);
-	SelectObject(hdc, oldPen); // 예전 pen으로 다시 그리기. 가능한 이유는 selecobject가 이전에 사용하던 그리기 도구를 가지고 있어서
-
-
-	//Brush
-	HBRUSH hatchBrush = CreateHatchBrush(HS_CROSS, RGB(255, 0, 0));
-	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, hatchBrush);
-	Rectangle(hdc, 100, 100, 200, 200);
-
-
-
-	DeleteObject(hatchBrush);
-	SelectObject(hdc,oldBrush);
-
-
-	// TODO
-	EndPaint(hwnd, &ps); // 그리기가 끝났다라는 것을 알려주는 것. 필수로 들어가야한다. window 내부는 다 C로 되어있기 때문에 소멸자 같은 역할을 하는 게 필요함.
-
+	Gdiplus::Graphics graphics(hdc);
+	Gdiplus::Image image(L"Doraemon.png");
+	graphics.DrawImage(&image, 0, 0, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
+	EndPaint(hwnd, &ps);
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
