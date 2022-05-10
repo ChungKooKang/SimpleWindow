@@ -61,6 +61,11 @@ int WINAPI WinMain(
 
 	// 만든 클래스를 활용하여 윈도우 생성
 	HWND hwnd;
+
+	RECT rect{ 0, 0, 640, 480 };
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+
+
 	hwnd = CreateWindowEx( // microsoft doc에 검색해보기
 		0,
 		gClassName, // 사용하는 클래스 이름
@@ -68,8 +73,8 @@ int WINAPI WinMain(
 		WS_OVERLAPPEDWINDOW, // window 그 겹치기 가능하게 하기
 		CW_USEDEFAULT, // 차곡 차곡 쌓겠다. x값
 		CW_USEDEFAULT, // 차곡 차곡 쌓겠다  y값
-		640, //가로 크기
-		480, // 세로 크기
+		rect.right - rect.left, //가로 크기
+		rect.bottom - rect.top, // 세로 크기
 		NULL, // manu 그 위에 있는 작은 클릭할 수 있는 리본들
 		NULL,
 		hInstance,
@@ -134,7 +139,7 @@ void OnPaint(HWND hwnd)
 
 	Gdiplus::Graphics graphics(hdc);
 	Gdiplus::Image image(L"Doraemon.png");
-	graphics.DrawImage(&image, 0, 0, ps.rcPaint.right - ps.rcPaint.left, ps.rcPaint.bottom - ps.rcPaint.top);
+	graphics.DrawImage(&image, 0, 0, image.GetWidth(), image.GetHeight());
 	EndPaint(hwnd, &ps);
 }
 
